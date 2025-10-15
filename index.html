@@ -3,60 +3,132 @@
 	<head>
 		<meta charset='utf-8'>
 		<title>Letters</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	</head>
 	<body>
 		<h1>Letters: JiYoon</h1>
 		<p>we write from left to right</p>
 		<div id="output"></div>
+		<div class="container">
+			<div class="circle"></div>			
+		</div>
+		<div class="wrap">
+			<div class="floating circle c1"></div>
+			<div class="floating circle c2"></div>
+			<div class="floating circle c3"></div>
+		</div>
+
+
+		<style>
+			.container {
+			  height: 400px;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+
+			.circle {
+			  width: 300px;
+			  height: 300px;
+			  border-radius: 50%;
+			  background-color: gold;
+			}
+
+			.wrap {
+				height: 400px;
+				position: relative;
+				overflow: hidden;
+				margin: 0 auto;
+			}
+
+			.floating {
+				position: absolute;
+			}
+
+			.c1 {
+				width: 50px;
+			    height: 50px;
+			    background-color: skyblue;
+				top: 30%;
+				left: 10%;
+			}
+
+			.c2 {
+				width: 50px;
+			    height: 50px;
+			    background-color: skyblue;
+				top: 10%;
+				right: 20%;
+			}
+
+			.c3 {
+				width: 50px;
+			    height: 50px;
+			    background-color: skyblue;
+				bottom: 10%;
+				right: 30%;
+			}
+		</style>
 
 		<script>
-			// find the #output element
-			  
-			 const outputEl = document.getElementById("output");
+		  // find the #output element
+		  const outputEl = document.getElementById("output");
 
-			// Listen for keydown events
-			document.addEventListener("keydown", function(event) {
-			    console.log("Key pressed:", event.key);			    
-				if (event.key === "Backspace") {
-				  outputEl.textContent = outputEl.textContent.slice(0, -1);
-				  } else if (event.key === "d" || event.key === "D") {
-				    outputEl.textContent += "BARK!";
-				} else {
-				  outputEl.textContent += event.key;
-				}
-			});
+		  // Utility: make an element, set a few attributes, append to #output
+		  function addDomElement(tag, attrs) {
+		    const el = document.createElement(tag);
+		    if (attrs) {
+		      for (const k in attrs) {
+		        if (k === "text") {
+		          el.textContent = attrs[k];
+		        } else {
+		          el.setAttribute(k, attrs[k]);
+		        }
+
+		      }
+		    }
+		    outputEl.appendChild(el);
+		    return el;
+		  }
+
+		  // Listen for keydown events
+		  document.addEventListener("keydown", function(event) {
+		    console.log("Key pressed:", event.key);
+		    if (event.key === "Backspace") {
+		      if (outputEl.lastChild) {
+		        outputEl.removeChild(outputEl.lastChild);
+		      }
+		    } else if (event.key === "d" || event.key === "D") {
+		      addDomElement("span", { text: "BARK!" });
+		    } else if (event.key === "c" || event.key === "C") {
+ 				 addDomElement("span", { text: "M-E-O-W" })
+  			} else {
+		      addDomElement("span", { text: event.key });
+		    }
+		  });
 
 
-						
-			// Utility: make an element, set a few attributes, append to #output
-			function addDomElement(tag, attrs) {
-			    const el = document.createElement(tag);
-			    if (attrs) {
-			      for (const k in attrs) {
-			        if (k === "text") {
-			          el.textContent = attrs[k];
-			        } else {
-			          el.setAttribute(k, attrs[k]);
-			        }
-			      }
-			    }
-			    outputEl.appendChild(el);
-			    return el;
-			  }
+		  function random(min, max) {
+		  	return parseFloat((Math.random() * (max - min) + min).toFixed(2))
+		  }
 
-			  // Listen for keydown events
-			  document.addEventListener("keydown", function(event) {
-			    console.log("Key pressed:", event.key);
-			    if (event.key === "Backspace") {
-			      if (outputEl.lastChild) {
-			        outputEl.removeChild(outputEl.lastChild);
-			      }
-			    } else if (event.key === "d" || event.key === "D") {
-			      addDomElement("span", { text: "BARK!" });
-			    } else {
-			      addDomElement("span", { text: event.key });
-			    }
-			  });
+		  function floatingCircle(item, delayAfter, size) {
+		  	gsap.to(
+		  		item,
+		  		random(1.5, 2.5),
+		  		{
+		  			delay: random(0, delayAfter),
+		  			y: size,
+		  			repeat: -1,
+		  			yoyo: true,
+		  			ease: Power1.easeInOut
+		  		}
+		  	);
+		  }
+
+		  floatingCircle('.c1', .5, 25)
+		  floatingCircle('.c2', 1, 20)
+		  floatingCircle('.c3', 1.5, 10)
 
 		</script>
 	</body>

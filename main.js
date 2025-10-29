@@ -48,7 +48,8 @@ function createCircle(num) {
 	const xMax = fieldRect.width;
 	const yMax = fieldRect.height;
 
-	size = randomNumber(10, 50);
+	size = Math.floor(randomNumber(1, 6));
+	rotate = randomNumber(0, 360);
 	  
 	newDiv = document.createElement('div');
 	    
@@ -61,10 +62,14 @@ function createCircle(num) {
   newDiv.style.left = `${x}px`;
   newDiv.style.top = `${y}px`;
   
-  newDiv.style.width = `${size}px`; 
-  newDiv.style.height = `${size}px`;
-  newDiv.style.backgroundColor = 'skyblue';
-  newDiv.style.borderRadius = '50%';
+  newDiv.style.width = `${size*15}px`; 
+  newDiv.style.height = `${size*15}px`;
+
+  newDiv.style.transform = `rotate(${rotate}deg)`;
+
+  newDiv.style.backgroundImage = `url('./img/asteroid_${size}.png')`;
+  newDiv.style.backgroundSize = 'contain';
+  newDiv.style.backgroundRepeat = 'no-repeat';
 
   field.appendChild(newDiv);
 

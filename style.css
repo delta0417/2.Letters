@@ -20,13 +20,17 @@ body {
   justify-content: center;
 	position: absolute;
 	overflow: hidden;
+
+  background-color: black;
 }
 
 .circle {
   width: 300px;
   height: 300px;
-  border-radius: 50%;
-  background-color: gold;
+
+  background-image: url("./img/planet.png");
+  background-size: contain;
+  background-repeat: no-repeat;
 
   transform: translateY(0);
   transition: all 0.8s ease-in;

@@ -1,22 +1,17 @@
-  // find the #output element
-const outputEl = document.getElementById("output");
-
-// Utility: make an element, set a few attributes, append to #output
-function addDomElement(tag, attrs) {
-	const el = document.createElement(tag);
-	if (attrs) {
-	  for (const k in attrs) {
-	    if (k === "text") {
-	      el.textContent = attrs[k];
-	    } else {
-	      el.setAttribute(k, attrs[k]);
-	    }
-
-	  }
+const keyDiv = document.querySelector('.key');
+function showKeydown(key){
+	keyDiv.innerText = `${key}`;
+	let keyframes = [
+		{opacity: 1},
+		{opacity: 0},
+	]
+	let options = {
+		duration: 1000,
+		easeing: "ease-in"
 	}
-	outputEl.appendChild(el);
-	return el;
+	keyDiv.animate(keyframes, options);
 }
+
 
 
 function random(min, max) {
@@ -105,25 +100,28 @@ hc_num = 0;
 
 // Listen for keydown events
 document.addEventListener("keydown", function(event) {
-console.log("Key pressed:", event.key);
-if (event.key === "q") {
-  createCircle(circle_num);
-  circle_num += 1;
-} else if (event.key === "w"){
-	circle.classList.toggle('upward');
-	setTimeout(function(){
+	console.log("Key pressed:", event.key);
+	if (event.key === "q") {
+	  createCircle(circle_num);
+	  circle_num += 1;
+	} else if (event.key === "w"){
 		circle.classList.toggle('upward');
-	}, 800);
-} else if (event.key === "e") {
-	createHollowCircle(hc_num);
-	setTimeout(function(){
-		activeHC(hc_num);
-		hc_num += 1;
-	}, 1);
-} else if (event.key === "c" || event.key === "C") {
-		 addDomElement("span", { text: "M-E-O-W" })
-	} else {
-  addDomElement("span", { text: event.key });
-}
+		setTimeout(function(){
+			circle.classList.toggle('upward');
+		}, 800);
+	} else if (event.key === "e") {
+		createHollowCircle(hc_num);
+		setTimeout(function(){
+			activeHC(hc_num);
+			hc_num += 1;
+		}, 1);
+	} else if (event.key === "r") {
+		
+	} 
+
+	showKeydown(event.key);
+
+
+
 });
 

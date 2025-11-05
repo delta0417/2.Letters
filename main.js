@@ -1,4 +1,10 @@
+const spaceship = document.querySelector(".spaceship");
+const background = document.querySelector('.background');
 const keyDiv = document.querySelector('.key');
+const manual = document.querySelector('.manual');
+
+
+// display keydown
 function showKeydown(key){
 	keyDiv.innerText = `${key}`;
 	let keyframes = [
@@ -13,12 +19,12 @@ function showKeydown(key){
 }
 
 
-
+// create astroid
 function random(min, max) {
 	return parseFloat((Math.random() * (max - min) + min).toFixed(2))
 }
 
-function floatingCircle(item, delayAfter, size) {
+function floating(item, delayAfter, size) {
 	gsap.to(
 		item,
 		random(1.5, 2.5),
@@ -33,30 +39,25 @@ function floatingCircle(item, delayAfter, size) {
 }
 
 
-const field = document.querySelector('.wrap');
+const field = document.querySelector('.others-container');
 const fieldRect = field.getBoundingClientRect();
 
 
-function randomNumber(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-
-function createCircle(num) {
+function createAsteroid(num) {
 	const xMin = 0;
 	const yMin = 0;
 	const xMax = fieldRect.width;
 	const yMax = fieldRect.height;
 
-	size = Math.floor(randomNumber(1, 6));
-	rotate = randomNumber(0, 360);
+	size = Math.floor(random(1, 6));
+	rotate = random(0, 360);
 	  
 	newDiv = document.createElement('div');
 	    
-	const x = randomNumber(xMin, xMax);
-  const y = randomNumber(yMin, yMax);
+	const x = random(xMin, xMax);
+  const y = random(yMin, yMax);
   
-  newDiv.className += `floating c${num}`;
+  newDiv.className += `floating asteroid${num}`;
 
   newDiv.style.position = 'absolute';
   newDiv.style.left = `${x}px`;
@@ -73,13 +74,69 @@ function createCircle(num) {
 
   field.appendChild(newDiv);
 
-  floatingCircle(`.c${num}`, 0, randomNumber(10, 25));
+  floating(`.asteroid${num}`, 0, random(10, 25));
+}
+
+asteroid_num = 0;
+
+for (let i = 0; i<20; i++){
+	createAsteroid(asteroid_num);
+	asteroid_num += 1;
 }
 
 
-background = document.querySelector('.background');
+// move(wasd)
+function move(x, y){
+	let keyframes = [
+		{transform: "translate(0, 0)"},
+		{transform: `translate(${x}px, ${y}px)`},
+		{transform: "translate(0, 0)"}
+	]
+	let options = {
+		duration: 1600,
+		easeing: "ease-out"
+	}
+	spaceship.animate(keyframes, options);
+}
 
 
+// warp(q)
+current_background = 1;
+
+function warp(){
+	let keyframes = [
+		{transform: "scale(1, 1)"},
+		{transform: "scale(0, 0)"}
+	]
+	let options = {
+		duration: 1600,
+		easeing: "ease-in"
+	}
+	spaceship.animate(keyframes, options);
+
+
+	next_background = Math.floor(random(2, 7));
+	keyframes = [
+		{backgroundImage: `url("./img/background_${current_background}.jpg")`},
+		{backgroundImage: 'url("./img/white.png")'},
+		{backgroundImage: `url("./img/background_${next_background}.jpg")`}
+	]
+	options = {
+		duration: 2000,
+		easeing: "easeInOut"
+	}
+	background.animate(keyframes, options);
+	background.style.backgroundImage = `url("./img/background_${next_background}.jpg")`;
+	current_background = next_background;
+
+	const asteroids = document.getElementsByClassName("floating");
+	for (let i = 0; i<20; i++){
+		asteroids[i].style.opacity = '0';
+	}
+}
+
+
+// radio wave(e)
 function createHollowCircle(num){
 	newDiv = document.createElement('div');
 	newDiv.className += `hollow-circle hc${num}`;
@@ -89,39 +146,76 @@ function createHollowCircle(num){
 function activeHC(num){
 	hollowCircle = document.querySelector(`.hc${num}`);
 	hollowCircle.classList.toggle('active');
-	
-	hollowCircle.ontransitionend = () => {
-		//hollowCircle.remove();
-		console.log(num);
-	}	
 }
 
 
-const circle = document.querySelector(".circle");
+// laser
+function createLaser(num){
+	newDiv = document.createElement('div');
+	newDiv.className += `laser${num}`;
+
+	newDiv.style.width = "50px"; 
+  newDiv.style.height = "50px";
+
+	newDiv.style.backgroundImage = "./img/laser.png";
+  newDiv.style.backgroundSize = 'contain';
+  newDiv.style.backgroundRepeat = 'no-repeat';
+
+	background.appendChild(newDiv);
+}
 
 
-circle_num = 0;
+function activeLaser(num){
+	const laser = document.querySelector(`.laser${num}`);
+	let keyframes = [
+		{transform: "translate(0, 0)"},
+		{transform: 'translate(0, -500px)'}
+	]
+	let options = {
+		duration: 500
+	}
+	laser.animate(keyframes, options);
+}
+
+
 hc_num = 0;
+laser_num = 0;
+
+const bgm = new Audio('./sound/bgm.mp3');
+bgm.volume = 0.5;
+bgm.loop = true;
+
+const radioWaveSound = new Audio('./sound/radio_wave.mp3');
+const warpSound = new Audio('./sound/warp.mp3');
+
 
 // Listen for keydown events
 document.addEventListener("keydown", function(event) {
+	bgm.play();
 	console.log("Key pressed:", event.key);
-	if (event.key === "q") {
-	  createCircle(circle_num);
-	  circle_num += 1;
-	} else if (event.key === "w"){
-		circle.classList.toggle('upward');
-		setTimeout(function(){
-			circle.classList.toggle('upward');
-		}, 800);
+	if (event.key === "w"){
+		move(0, -100);
+	} else if (event.key === "a"){
+		move(-100, 0);
+	} else if (event.key === "s") {
+		move(0, 100);
+	} else if (event.key === "d") {
+		move(100, 0);
+	} else if (event.key === "q") {
+		warpSound.play();
+	  warp();
+	  manual.style.opacity = '0';
 	} else if (event.key === "e") {
+		radioWaveSound.play();
 		createHollowCircle(hc_num);
 		setTimeout(function(){
 			activeHC(hc_num);
 			hc_num += 1;
 		}, 1);
 	} else if (event.key === "r") {
-		
+		createLaser(laser_num);
+		activeLaser(laser_num);
+		laser_num += 1;
 	} 
 
 	showKeydown(event.key);
